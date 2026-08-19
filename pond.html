@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>droogworks — the pond</title>
+<style>
+  :root{
+    --water:#0e3b40; --water-deep:#092a2e; --pad:#3f7d4e; --pad-lit:#5a9a66;
+    --paper:#faf8f3; --ink:#1d1c1a; --faded:#bfd6cf; --accent:#155e63;
+    --moon:#f0e9d2;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:linear-gradient(180deg,var(--water) 0%,var(--water-deep) 100%);
+    min-height:100vh;color:var(--paper);
+    font:17px/1.55 Georgia,'Times New Roman',serif;
+    -webkit-font-smoothing:antialiased}
+  header{max-width:820px;margin:0 auto;padding:44px 20px 6px;text-align:center}
+  h1{font-size:40px;font-weight:normal;letter-spacing:1px}
+  h1 em{font-style:italic;color:var(--faded)}
+  .sub{color:var(--faded);font-size:14px;margin-top:6px;
+    font-family:-apple-system,Helvetica,Arial,sans-serif}
+  /* the pond map */
+  .pond{max-width:820px;margin:14px auto 0;padding:0 12px}
+  .lilies{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:22px;padding:18px 8px 8px}
+  a.pad{display:block;text-decoration:none;color:var(--ink);
+    background:radial-gradient(ellipse at 38% 32%, var(--pad-lit), var(--pad) 70%);
+    border-radius:52% 48% 55% 45% / 55% 52% 48% 45%;
+    padding:30px 26px 34px;position:relative;
+    box-shadow:0 10px 28px rgba(0,0,0,.35), inset 0 2px 8px rgba(255,255,255,.14);
+    transition:transform .15s ease}
+  a.pad::before{content:"";position:absolute;top:12%;right:8%;width:20%;height:26%;
+    background:var(--water);border-radius:0 60% 60% 60%;
+    transform:rotate(18deg);opacity:.85} /* the notch every lily pad has */
+  a.pad:hover,a.pad:focus-visible{transform:translateY(-3px) rotate(-.6deg);outline:none}
+  a.pad:focus-visible{box-shadow:0 0 0 3px var(--moon),0 10px 28px rgba(0,0,0,.35)}
+  .pad .name{font-size:23px;color:var(--paper);font-style:italic}
+  .pad .what{font:13px/1.45 -apple-system,Helvetica,Arial,sans-serif;
+    color:#eaf3ec;margin-top:6px;opacity:.92;max-width:26ch}
+  .pad .state{font:11px -apple-system,sans-serif;text-transform:uppercase;
+    letter-spacing:1.4px;color:var(--moon);margin-top:12px;opacity:.85}
+  .ripple{max-width:820px;margin:34px auto 0;padding:0 20px;text-align:center;
+    color:var(--faded);font-style:italic;font-size:15px}
+  footer{max-width:820px;margin:40px auto 0;padding:0 20px 46px;text-align:center;
+    color:var(--faded);font:12.5px -apple-system,Helvetica,Arial,sans-serif}
+  footer a{color:var(--faded)}
+  @media (prefers-reduced-motion: reduce){a.pad{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>droog<em>works</em></h1>
+  <div class="sub">the pond · works, tools, and the pad of Doug Sharp — Mage of Vashon</div>
+</header>
+
+<nav class="pond" aria-label="Pods">
+  <div class="lilies">
+    <a class='pad' href='/library'>
+      <div class="name">Writing</div>
+      <div class="what">The Library: novels, satires, memoirs — searchable, tap a book to open it.</div>
+      <div class="state">Open &#183; 12 works</div>
+    </a>
+    <a class="pad" href="dramaton-studio/">
+      <div class="name">Game Workshop</div>
+      <div class="what">Straight into Dramaton Studio — scenes, actors, DramScript, Theater.</div>
+      <div class="state">Open &#183; the editor itself</div>
+    </a>
+    <a class='pad' href='/control'>
+      <div class="name">Work</div>
+      <div class="what">Mission Control: tasks, dials, the Bank, the sky calendar.</div>
+      <div class="state">Open</div>
+    </a>
+    <a class='pad' href='/music'>
+      <div class="name">Music</div>
+      <div class="what">Fifteen albums, catalogued and waiting for their room.</div>
+      <div class="state">Growing</div>
+    </a>
+    <a class='pad' href='/art'>
+      <div class="name">Art</div>
+      <div class="what">Fifty years of images — and Chris Unruh's frogs, when they arrive.</div>
+      <div class="state">Growing</div>
+    </a>
+    <a class='pad' href='/games'>
+      <div class="name">Games</div>
+      <div class="what">ChipWits, King of Chicago — playable in emulation, once the links land.</div>
+      <div class="state">Growing</div>
+    </a>
+    <a class='pad' href='https://10.0.0.137:8473'>
+      <div class="name">BIRO</div>
+      <div class="what">The writing Familiar. Its story — and, from home WiFi, the instrument itself.</div>
+      <div class="state">v1.34 &#183; alive</div>
+    </a>
+    <a class='pad' href='/design'>
+      <div class="name">The Design Doc</div>
+      <div class="what">The unified vision: pond, pads, pods, Phrog, Familiars, the Grip.</div>
+      <div class="state">Living document</div>
+    </a><a class='pad' href='/dramaton-studio/'><div class='name'>Game Workshop</div><div class='what'>Straight into Dramaton Studio.</div><div class='state'>Open</div></a><a class='pad' href='/quotes'><div class='name'>Voice Notes</div><div class='what'>1,976 quotes from the dictaphone decades.</div><div class='state'>Open</div></a>
+  </div>
+</nav>
+
+<p class="ripple">Museum, Collaboration, and Performance pods are still under the water, growing.</p>
+
+<footer>
+  <strong>droogworks v0.7 · front door: the Pad</strong> &#183; Aug 17, 2026<br>
+  No likes. No comments. No feed. This pond counts nothing (except its own version).<br>
+  droogworks is the first pad on the Phrog platform — built by its own thesis: spoken, not typed.
+</footer>
+</body>
+</html>

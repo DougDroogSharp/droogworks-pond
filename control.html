@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DROOG MISSION CONTROL</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap');
+
+:root{
+  --void:#150020;
+  --panel:#22093a;
+  --panel2:#2c1150;
+  --line:#4a2a7a;
+  --volt:#E8FF2B;
+  --pink:#FF2D95;
+  --purple:#8A3FFC;
+  --mint:#3BF5C6;
+  --amber:#FFB020;
+  --red:#FF4D4D;
+  --paper:#F2EAFF;
+  --dim:#B9A6D9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--void);
+  color:var(--paper);
+  font-family:'Space Grotesk',system-ui,sans-serif;
+  font-size:17px;
+  line-height:1.45;
+  min-height:100vh;
+  padding-bottom:60px;
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px}
+
+/* ---------- masthead ---------- */
+header{
+  border-bottom:4px solid var(--volt);
+  background:linear-gradient(180deg,#1c0530 0%, #150020 100%);
+  padding:22px 0 16px;
+}
+h1{
+  font-family:'Bungee',cursive;
+  font-size:clamp(1.5rem,6vw,2.4rem);
+  letter-spacing:.02em;
+  line-height:1.05;
+  color:var(--volt);
+  text-shadow:3px 3px 0 var(--pink);
+}
+.tagline{
+  font-family:'Space Mono',monospace;
+  color:var(--pink);
+  font-size:.8rem;
+  margin-top:6px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+}
+.headrow{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+
+/* rest switch */
+.rest-btn{
+  font-family:'Space Mono',monospace;
+  background:none;border:2px solid var(--mint);color:var(--mint);
+  padding:10px 16px;border-radius:10px;font-size:.85rem;cursor:pointer;
+  text-transform:uppercase;letter-spacing:.08em;
+}
+.rest-btn:active{transform:translateY(1px)}
+
+/* ---------- status line ---------- */
+.status{
+  margin:16px 0 4px;
+  font-style:italic;
+  color:var(--dim);
+  border-left:4px solid var(--purple);
+  padding-left:12px;
+  min-height:1.4em;
+}
+
+/* ---------- panels ---------- */
+section{
+  background:var(--panel);
+  border:2px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  margin:18px 0;
+}
+h2{
+  font-family:'Bungee',cursive;
+  font-size:1rem;
+  color:var(--pink);
+  letter-spacing:.04em;
+  margin-bottom:12px;
+}
+h2 .sub{
+  font-family:'Space Mono',monospace;
+  color:var(--dim);font-size:.7rem;letter-spacing:.1em;
+  display:block;margin-top:2px;text-transform:uppercase;
+}
+
+/* ---------- today queue ---------- */
+.tq{
+  display:flex;align-items:center;gap:8px;padding:9px 0;
+  border-top:1px solid rgba(74,42,122,.5);
+}
+.tq.now{
+  border:2px dashed var(--pink);border-radius:12px;padding:12px;margin:4px 0;
+  background:var(--panel2);
+}
+.tq.now .tq-text{color:var(--volt);font-weight:700;font-size:1.05rem}
+.tq.done .tq-text{text-decoration:line-through;color:var(--dim)}
+.tq-text{flex:1;word-break:break-word}
+.tq-proj{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--dim);display:block;text-transform:uppercase}
+.tq-arrow{
+  background:none;border:2px solid var(--line);color:var(--paper);border-radius:8px;
+  width:32px;height:32px;cursor:pointer;font-size:.9rem;
+}
+.tq-arrow:active{border-color:var(--volt)}
+.today-empty{color:var(--dim);font-family:'Space Mono',monospace;font-size:.78rem}
+/* ---------- big three ---------- */
+.b3{
+  display:flex;align-items:center;gap:12px;padding:12px;margin:6px 0;
+  border:2px solid var(--line);border-radius:12px;background:var(--panel2);cursor:pointer;
+}
+.b3 .b3-rank{font-family:'Space Mono',monospace;font-size:1.3rem;color:var(--pink);min-width:1.2em;text-align:center}
+.b3 .b3-proj{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--mint);text-transform:uppercase;letter-spacing:.12em;display:block}
+.b3 .b3-task{font-size:1.02rem;color:var(--volt);font-weight:700;word-break:break-word}
+.b3:first-child{border-color:var(--pink)}
+.tq-btn{
+  background:none;border:2px solid var(--line);color:var(--dim);border-radius:8px;
+  min-width:34px;height:34px;cursor:pointer;font-size:.95rem;
+}
+.tq-btn.q{border-color:var(--mint);color:var(--mint)}
+.result-head{
+  font-family:'Space Mono',monospace;font-size:.68rem;color:var(--pink);
+  text-transform:uppercase;letter-spacing:.1em;margin-top:14px;
+}
+
+/* ---------- work mode ---------- */
+#work{
+  position:fixed;inset:0;background:var(--void);z-index:40;display:none;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+#work.on{display:block}
+.work-inner{max-width:760px;margin:0 auto;padding:16px 14px 80px}
+.work-top{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:6px 0 14px;border-bottom:4px solid var(--pink);margin-bottom:16px;
+}
+.work-proj{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em}
+.work-title{
+  font-family:'Bungee',cursive;font-size:1.25rem;color:var(--volt);line-height:1.25;margin-top:4px;
+}
+.work-close{
+  background:none;border:2px solid var(--line);color:var(--paper);border-radius:10px;
+  padding:10px 14px;cursor:pointer;font-family:'Space Mono',monospace;font-size:.8rem;
+  white-space:nowrap;
+}
+.work-notes{
+  width:100%;background:var(--panel);border:2px solid var(--purple);color:var(--paper);
+  border-radius:12px;padding:12px;font-size:1rem;font-family:'Space Grotesk',sans-serif;
+  resize:vertical;min-height:80px;
+}
+.task-text{cursor:pointer}
+.task-text:active{color:var(--volt)}
+.to-sub{
+  background:none;border:1px solid var(--mint);color:var(--mint);border-radius:8px;
+  padding:4px 8px;font-size:.68rem;font-family:'Space Mono',monospace;cursor:pointer;
+}
+.due{
+  font-family:'Space Mono',monospace;font-size:.65rem;color:var(--dim);
+  border:1px solid var(--line);border-radius:6px;padding:1px 6px;white-space:nowrap;
+}
+.due.soon{color:var(--amber);border-color:var(--amber)}
+.due.over{color:var(--red);border-color:var(--red);font-weight:700}
+.links-row{display:flex;flex-wrap:wrap;gap:6px;padding:10px 0 4px;align-items:center}
+.link-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'Space Mono',monospace;font-size:.72rem;
+  background:var(--void);border:2px solid var(--mint);color:var(--mint);
+  border-radius:999px;padding:6px 12px;text-decoration:none;letter-spacing:.03em;
+}
+.link-pill .lx{color:var(--dim);cursor:pointer;font-size:.85rem;padding:0 2px}
+.link-pill .lx.armed{color:var(--red)}
+.link-add{display:flex;gap:6px;margin:6px 0 4px}
+.link-add input{
+  background:var(--void);border:2px solid var(--line);color:var(--paper);
+  border-radius:10px;padding:8px;font-size:.85rem;font-family:'Space Grotesk',sans-serif;min-width:0;
+}
+.link-add input.ln{flex:1}
+.link-add input.lu{flex:2}
+.link-add button{background:var(--purple);border:none;color:#fff;border-radius:10px;padding:0 12px;cursor:pointer}
+.link-toggle{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--dim);background:none;border:none;text-decoration:underline;cursor:pointer}
+
+/* ---------- footer ---------- */
+footer{
+  margin-top:30px;text-align:center;color:var(--dim);
+  font-size:.8rem;padding:0 20px;
+}
+footer .q{font-style:italic;margin-bottom:8px}
+footer a{color:var(--pink)}
+
+/* ---------- rest overlay ---------- */
+#rest{
+  position:fixed;inset:0;background:#0a0012;z-index:50;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:30px;
+}
+#rest.on{display:flex}
+#rest p{
+  font-family:'Space Mono',monospace;color:#5b4a78;font-size:1rem;
+  max-width:420px;line-height:2;
+}
+#rest button{
+  margin-top:40px;background:none;border:1px solid #3a2a55;color:#5b4a78;
+  padding:12px 26px;border-radius:12px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:.8rem;text-transform:uppercase;letter-spacing:.15em;
+}
+
+.saving{position:fixed;bottom:10px;right:14px;font-family:'Space Mono',monospace;font-size:.7rem;color:var(--dim);opacity:0;transition:opacity .3s;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 10px;z-index:60}
+.saving.show{opacity:1}
+
+/* ---------- restored + densified: projects, task rows, bank ---------- */
+.proj{border-top:1px solid var(--line);padding:8px 0 4px}
+.proj:first-child{border-top:none}
+.proj-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:8px}
+.proj-head h3{font-family:'Bungee',cursive;font-size:.85rem;color:var(--mint);letter-spacing:.03em}
+.proj-meta{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--dim);text-transform:uppercase;white-space:nowrap}
+.proj-body{padding:2px 0 6px}
+.task{display:flex;align-items:center;gap:6px;padding:2px 0;border-top:1px solid rgba(74,42,122,.35)}
+.task-text{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.9rem;line-height:1.35}
+.task.done .task-text{text-decoration:line-through;color:var(--dim)}
+.chk{width:26px;height:26px;flex:none;background:none;border:2px solid var(--mint);color:var(--mint);border-radius:7px;cursor:pointer;font-size:.8rem;padding:0;line-height:1}
+.dial{width:30px;height:26px;flex:none;background:var(--panel2);border:2px solid var(--purple);color:var(--paper);border-radius:7px;cursor:pointer;font-family:'Space Mono',monospace;font-size:.72rem;padding:0}
+.dial.hot{border-color:var(--volt);color:var(--volt)}
+.del{width:24px;height:26px;flex:none;background:none;border:none;color:var(--dim);cursor:pointer;font-size:1rem;padding:0}
+.tq-btn{min-width:26px;height:26px;font-size:.8rem}
+.tq{padding:4px 0;gap:6px}
+.tq.now{padding:8px 10px}
+.tq-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.92rem}
+.tq-proj{display:inline;margin-left:8px}
+.tq-arrow{width:26px;height:26px}
+.add-row{display:flex;gap:6px;margin-top:8px}
+.add-row input{flex:1;min-width:0;background:var(--void);border:2px solid var(--line);color:var(--paper);border-radius:9px;padding:7px 10px;font-size:.9rem;font-family:'Space Grotesk',sans-serif}
+.add-row button{background:var(--purple);border:none;color:#fff;border-radius:9px;padding:0 14px;cursor:pointer;font-size:1rem}
+.new-proj{margin-top:10px;background:none;border:2px dashed var(--line);color:var(--dim);border-radius:10px;padding:8px 14px;cursor:pointer;font-family:'Space Mono',monospace;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;width:100%}
+.undo-btn{background:none;border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:6px 10px;cursor:pointer;font-family:'Space Mono',monospace;font-size:.68rem}
+.idea-input{width:100%;background:var(--void);border:2px solid var(--line);color:var(--paper);border-radius:10px;padding:10px;font-size:.95rem;font-family:'Space Grotesk',sans-serif;resize:vertical}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-family:'Space Mono',monospace;font-size:.68rem;background:none;border:1px solid var(--line);color:var(--dim);border-radius:999px;padding:4px 10px;cursor:pointer}
+.chip.on{border-color:var(--volt);color:var(--volt)}
+.bank-search{width:100%;margin-top:10px;background:var(--void);border:2px solid var(--line);color:var(--paper);border-radius:10px;padding:8px 10px;font-size:.9rem;font-family:'Space Grotesk',sans-serif}
+.idea{border-top:1px solid rgba(74,42,122,.4);padding:7px 0}
+.idea-text{font-size:.92rem}
+.idea-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px}
+.idea-tag{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--mint)}
+.ballast-row{display:grid;gap:8px}
+.ballast-btn{background:var(--panel2);border:2px solid var(--line);color:var(--paper);border-radius:10px;padding:10px;cursor:pointer;font-family:'Space Mono',monospace;font-size:.7rem;text-transform:uppercase}
+.ballast-btn.flare{border-color:var(--amber);color:var(--amber)}
+.cap-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important}
+}
+@media(max-width:480px){
+  .spend-row{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div id="work">
+  <div class="work-inner">
+    <div class="work-top">
+      <div>
+        <span class="work-proj" id="workProj"></span>
+        <div class="work-title" id="workTitle"></div>
+      </div>
+      <button class="work-close" onclick="closeWork()">← bridge</button>
+    </div>
+    <section>
+      <h2>Target Date <span class="sub">optional · most tasks fly free</span></h2>
+      <div class="cap-row" style="margin-top:0">
+        <input type="date" id="workDue" onchange="setDue(this.value)"
+          style="background:var(--panel2);border:2px solid var(--line);color:var(--paper);border-radius:10px;padding:10px;font-family:'Space Mono',monospace">
+        <button class="undo-btn" onclick="setDue('')">clear date</button>
+        <span id="workDueMsg" style="font-family:'Space Mono',monospace;font-size:.75rem"></span>
+      </div>
+    </section>
+    <section>
+      <h2>Subtasks <span class="sub">no tags down here — subtasks are born filed</span></h2>
+      <div id="workSubs"></div>
+      <div class="add-row">
+        <input id="subInput" placeholder="new subtask… (🎤 works here too)">
+        <button onclick="addSub()">+</button>
+      </div>
+    </section>
+    <section>
+      <h2>Field Notes <span class="sub">the task's scratchpad · dictate freely</span></h2>
+      <textarea id="workNotes" class="work-notes" rows="4" onchange="saveNotes(this.value)"
+        placeholder="Thinking out loud lives here…"></textarea>
+    </section>
+    <section>
+      <h2>From The Bank <span class="sub">ideas tagged for this project</span></h2>
+      <div id="workIdeas"></div>
+    </section>
+    <button class="undo-btn" id="workDelBtn" onclick="delCurrentTask()"
+      style="margin-top:14px;border-color:var(--red);color:var(--red)">delete this task</button>
+  </div>
+</div>
+
+<div id="mailhelp" style="position:fixed;inset:0;background:rgba(10,0,18,.92);z-index:50;display:none;align-items:center;justify-content:center;padding:24px">
+  <div style="max-width:460px;background:var(--panel);border:2px solid var(--mint);border-radius:16px;padding:22px">
+    <h2 style="margin-bottom:10px">✉ Your Mail Filter Is Claude</h2>
+    <p style="font-size:.95rem;line-height:1.6;color:var(--paper)">Open any Claude chat and just say what you want:</p>
+    <ul style="margin:10px 0 0 18px;font-size:.92rem;line-height:1.9;color:var(--paper)">
+      <li>&ldquo;Triage my inbox&rdquo;</li>
+      <li>&ldquo;Anything important this week?&rdquo;</li>
+      <li>&ldquo;Find the email from Chris&rdquo;</li>
+      <li>&ldquo;Draft a reply to&hellip;&rdquo;</li>
+    </ul>
+    <p style="margin-top:12px;font-size:.8rem;color:var(--dim)">Claude has the Gmail connection: search, summarize, label, draft &mdash; on command. A real mail panel here is parked until Hermes.</p>
+    <button class="rest-btn" style="margin-top:16px" onclick="toggleMailHelp(false)">got it</button>
+  </div>
+</div>
+
+<div id="rest">
+  <p>Rest is a system state.<br>A pause must emit nothing.</p>
+  <button onclick="toggleRest(false)">return to the bridge</button>
+</div>
+
+<header>
+  <div class="wrap headrow">
+    <div>
+      <a href='/' style='font-family:\'Space Mono\',monospace;font-size:.7rem;color:var(--mint);text-decoration:none;letter-spacing:.1em'>&#8592; BACK TO THE POND</a>
+      <h1 style="margin-top:6px">DROOG<br>MISSION CONTROL</h1>
+      <div class="tagline">All dials start at 11 · est. Vashon Island</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="rest-btn" onclick="toggleMailHelp(true)">✉ Gmail</button>
+      <button class="rest-btn" onclick="toggleRest(true)">☾ Rest Mode</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="status" id="status"></div>
+
+  <!-- BIG THREE -->
+  <section>
+    <h2>The Big Three <span class="sub">the three most important tasks right now · project · task · always A Thing To Do</span></h2>
+    <div id="big3"></div>
+  </section>
+
+  <!-- TODAY -->
+  <section>
+    <h2>Today's Programme <span class="sub">queue tasks with the ▸ button · top undone item is THE item</span></h2>
+    <div id="todayList"></div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section>
+    <h2>Projects <span class="sub">tap a dial to turn it up · it wraps past 11</span></h2>
+    <div id="projects"></div>
+    <div id="newProjRow" class="add-row" style="display:none">
+      <input id="newProjName" placeholder="project name…">
+      <button onclick="commitProject()">✓</button>
+    </div>
+    <button class="new-proj" id="newProjBtn" onclick="showNewProject()">+ new project</button>
+  </section>
+
+  <!-- CALENDAR -->
+  <section>
+    <h2>Sky Calendar <span class="sub">your Google agenda &#183; shows when this browser is signed into Google</span></h2>
+    <iframe title="Google Calendar agenda"
+      src="https://calendar.google.com/calendar/embed?src=dougdroogsharp%40gmail.com&mode=AGENDA&ctz=America%2FLos_Angeles&showTitle=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0"
+      style="width:100%;height:320px;border:2px solid var(--line);border-radius:12px;background:#fff"
+      loading="lazy"></iframe>
+    <div class="today-empty" style="margin-top:6px">If the box asks you to sign in or says the calendar isn't public, sign into Google in this browser and refresh &#8212; it is private to you, not broken.</div>
+  </section>
+
+  <!-- THE BANK -->
+  <section>
+    <h2>The Bank <span class="sub">deposit ideas · tag · search · promote to task</span></h2>
+    <textarea id="ideaInput" class="idea-input" rows="3" oninput="autoTag()"
+      placeholder="Tap here, then tap the 🎤 on your keyboard and just talk. Or type, if you must."></textarea>
+    <div class="chip-row" id="chipRow"></div>
+    <div class="add-row" style="margin-top:10px">
+      <input id="customTag" placeholder="custom tag…" style="max-width:150px">
+      <button onclick="addCustomTag()" title="add tag">#</button>
+      <button onclick="depositIdea()" style="background:var(--pink);flex:1;font-family:'Bungee',cursive;font-size:.85rem">DEPOSIT</button>
+    </div>
+    <input id="bankSearch" class="bank-search" placeholder="🔍 search the vault…" oninput="renderBank()">
+    <div class="chip-row" id="filterRow" style="margin-top:8px"></div>
+    <div id="bankList"></div>
+  </section>
+
+  <!-- LIFEBOAT -->
+  <section>
+    <h2>Lifeboat <span class="sub">backup & restore · insurance against storage weather</span></h2>
+    <div class="ballast-row" style="grid-template-columns:repeat(3,1fr)">
+      <button class="ballast-btn" onclick="saveNow()">⏎ Save now</button>
+      <button class="ballast-btn" onclick="doBackup()">⇩ Backup</button>
+      <button class="ballast-btn flare" onclick="showRestore()">⇧ Restore</button>
+    </div>
+    <div id="restoreRow" style="display:none;margin-top:10px">
+      <textarea id="restoreText" class="idea-input" rows="3" placeholder="Paste a backup here…"></textarea>
+      <div class="add-row"><button onclick="doRestore()" style="background:var(--red);flex:1;font-family:'Bungee',cursive;font-size:.8rem;color:#fff;border:none;border-radius:10px;padding:10px">RESTORE — OVERWRITES EVERYTHING</button></div>
+    </div>
+    <div id="backupOut" style="display:none;margin-top:10px">
+      <textarea id="backupText" class="idea-input" rows="3" readonly onclick="this.select()"></textarea>
+      <div class="today-empty" style="margin-top:6px">Tap the box, Select All, Copy — then paste it somewhere safe (a note, an email to yourself).</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="q" id="footQuote"></div>
+    <div><a href="https://store.steampowered.com/app/2330720/ChipWits/" target="_blank" rel="noopener">ChipWits on Steam</a> · Droog Mission Control v1 · the droogworks Control Panel pod</div>
+  </footer>
+</div>
+
+<div class="saving" id="saving">saved</div>
+
+<script>
+/* droogworks adapter: on Netlify there is no artifact storage — localStorage stands in */
+if(!window.storage){
+  window.storage={
+    async get(k){const v=localStorage.getItem('dw-'+k);return v===null?null:{key:k,value:v};},
+    async set(k,v){localStorage.setItem('dw-'+k,String(v));return{key:k,value:String(v)};},
+    async delete(k){localStorage.removeItem('dw-'+k);return{key:k,deleted:true};}
+  };
+}
+const KEY='droog-mission-control';
+const todayStr=()=>new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD local
+
+const DEFAULT_STATE={
+  date:todayStr(),
+  capacity:10,
+  spent:[],            // array of {type,t}
+  stability:{},        // {date: score}
+  oneThing:'',
+  restSince:null,
+  projects:[
+    {id:'dw',name:'DROOGWORKS',open:true,tasks:[
+      {id:t(),text:'Deploy to Netlify — one URL for everything',dial:11,done:false},
+      {id:t(),text:'Game Room pod: ChipWits + King of Chicago emulation links',dial:7,done:false},
+      {id:t(),text:'Museum pod: pick the best-of',dial:6,done:false},
+      {id:t(),text:"Swap in Chris Unruh's art (frogs, pads, alligators)",dial:5,done:false}]},
+    {id:'biro',name:'BIRO',open:true,tasks:[
+      {id:t(),text:'Live test v1.34: chirp, bubble, one edit',dial:11,done:false},
+      {id:t(),text:'COMMIT — uncommitted work is what crashes steal',dial:10,done:false},
+      {id:t(),text:'Full accounting from Claude Code, version by version',dial:9,done:false},
+      {id:t(),text:'Rewrite six-day campaign against the real state',dial:8,done:false},
+      {id:t(),text:'Zoom to writing / selection (settable; split view if they diverge)',dial:6,done:false},
+      {id:t(),text:'Test double-execution with Apple Voice Control ON',dial:4,done:false}]},
+    {id:'dramaton',name:'DRAMATON',open:false,tasks:[
+      {id:t(),text:'Link GitHub editor + resurrection analysis on the pod page',dial:7,done:false},
+      {id:t(),text:'Commission: Phrog onboarding as a Dramaton story',dial:5,done:false}]},
+    {id:'phrog',name:'PHROG',open:false,tasks:[
+      {id:t(),text:'Modality Modules: any input becomes text (blind Mage, voiceless Mage)',dial:6,done:false},
+      {id:t(),text:'Privacy & encryption workstream (after v0 ships, on purpose)',dial:4,done:false}]},
+    {id:'hvb',name:'HUMANS VS BILLIONAIRES',open:false,tasks:[
+      {id:t(),text:'Capone chapter: first playable beat',dial:5,done:false}]},
+    {id:'letters',name:'LETTERS',open:false,tasks:[
+      {id:t(),text:'One letter, when ready (Jeff / daughter / Aaliyah / Dakota)',dial:3,done:false}]},
+    {id:'later',name:'LATER, ON PURPOSE',open:false,tasks:[
+      {id:t(),text:'Scrivener extraction batches 04–12 → full manuscripts in the Library',dial:2,done:false},
+      {id:t(),text:'Handwriting-animation fonts (watch the pen write)',dial:1,done:false}]}
+  ],
+  ballast:[]
+};
+function t(){return Math.random().toString(36).slice(2,9)}
+
+let S=null;
+
+/* ---------- storage ---------- */
+async function load(){
+  try{
+    const r=await window.storage.get(KEY);
+    S=r&&r.value?JSON.parse(r.value):structuredClone(DEFAULT_STATE);
+  }catch(e){ S=structuredClone(DEFAULT_STATE); }
+  // daily rollover: keep everything, reset today's spend, clear finished queue items
+  if(S.date!==todayStr()){
+    S.date=todayStr(); S.spent=[];
+    S.queue=(S.queue||[]).filter(r=>{const f=findTask(r);return f&&!f.task.done;});
+    save();
+  }
+  // one-time task injections (reach saved states on every device)
+  S.migrations=S.migrations||{};
+  if(!S.migrations.dram1){
+    let p=S.projects.find(x=>x.id==='dramaton'||x.name==='DRAMATON');
+    if(!p){p={id:'dramaton',name:'DRAMATON',open:false,tasks:[]};S.projects.push(p);}
+    p.tasks.push(
+      {id:t(),text:'Port AGENCY/WITNESS scene types + CHEER/BOO/SILENCE/WALK-AWAY palette (salvage doc)',dial:6,done:false},
+      {id:t(),text:'Adopt 2.0 item vocabulary: costume / prop / knowledge / gear',dial:4,done:false},
+      {id:t(),text:'Surface the Cost Meter (tokenEstimate.ts already computes it)',dial:4,done:false},
+      {id:t(),text:'Frogify the editor: voice-first Familiar, keep parser/runner/types (when game work begins)',dial:3,done:false},
+      {id:t(),text:'Reserve: witness-reaction mechanics — design inside Humans VS Billionaires',dial:2,done:false},
+      {id:t(),text:'Reserve: dieselpunk theme as a Studio skin',dial:1,done:false}
+    );
+    S.migrations.dram1=true; save();
+  }
+  renderAll();
+  probeStorage();
+}
+let saveTimer=null, saveBusy=false, dirty=false, lastErr='', storageOK=null, coolUntil=0;
+async function probeStorage(){
+  // Definitive test: write a tiny value, read it back. Report the verdict plainly.
+  const TESTKEY='dmc-writetest';
+  try{
+    await window.storage.set(TESTKEY, 't'+Date.now());
+    const back=await window.storage.get(TESTKEY);
+    if(back && back.value){
+      storageOK=true;
+      banner('✓ Storage writes WORK in this view. Your changes will save.','var(--mint)');
+    } else {
+      storageOK=false;
+      banner('✗ Write returned nothing. Saves unreliable here — use Lifeboat → Backup.','var(--red)');
+    }
+  }catch(e){
+    storageOK=false; lastErr=String(e&&e.message||e);
+    banner('✗ Storage writes FAIL in this view ('+lastErr+'). This is a platform limit, not your fault. Use Lifeboat → Backup to keep your data, and try opening this from claude.ai in a browser.','var(--red)');
+  }
+}
+function banner(text,color){
+  const b=document.createElement('div');
+  b.style.cssText='background:'+(color||'var(--panel)')+';color:'+(color==='var(--mint)'?'#0a0012':'#fff')+';font-family:Space Mono,monospace;font-size:.75rem;padding:10px 14px;border-radius:10px;margin:10px 0;line-height:1.5';
+  b.textContent=text;
+  b.onclick=()=>b.remove();
+  document.querySelector('.wrap').prepend(b);
+}
+function save(){
+  dirty=true; showPill('unsaved…','var(--amber)',true);
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(doSave,2000);   // coalesce bursts: wait 2s of quiet
+}
+function saveNow(){ coolUntil=0; clearTimeout(saveTimer); doSave(); }
+async function doSave(){
+  if(saveBusy||!dirty)return;
+  if(Date.now()<coolUntil)return;      // respect cooldown after a failure
+  saveBusy=true;
+  const payload=JSON.stringify(S);
+  try{
+    await window.storage.set(KEY,payload);
+    if(JSON.stringify(S)===payload) dirty=false;   // clean only if unchanged since
+    coolUntil=0;
+    showPill('saved','var(--mint)',false);
+  }catch(e){
+    lastErr=String(e&&e.message||e);
+    coolUntil=Date.now()+30000;        // back off 30s — rate-limit friendly
+    showPill('save paused 30s — tap for details','var(--red)',true);
+  }
+  saveBusy=false;
+}
+setInterval(()=>{ if(dirty&&!saveBusy&&Date.now()>=coolUntil) doSave(); },20000);
+document.addEventListener('visibilitychange',()=>{ if(document.hidden&&dirty&&!saveBusy&&Date.now()>=coolUntil) doSave(); });
+// watchdog: if anything is unsaved, keep trying quietly forever
+setInterval(()=>{ if(dirty&&!saveBusy) doSave(); },8000);
+// flush when leaving/hiding the page
+document.addEventListener('visibilitychange',()=>{ if(document.hidden&&dirty&&!saveBusy) doSave(); });
+function showPill(text,color,sticky){
+  const el=document.getElementById('saving');
+  el.textContent=text; el.style.color=color;
+  el.classList.add('show');
+  el.onclick=()=>{ if(lastErr) alertBox('Last storage error: '+lastErr); };
+  clearTimeout(el._t);
+  if(!sticky) el._t=setTimeout(()=>el.classList.remove('show'),1500);
+}
+function alertBox(msg){
+  let b=document.getElementById('alertBox');
+  if(!b){
+    b=document.createElement('div'); b.id='alertBox';
+    b.style.cssText='position:fixed;bottom:44px;right:14px;left:14px;max-width:500px;margin-left:auto;background:var(--panel);border:2px solid var(--red);color:var(--paper);font-family:Space Mono,monospace;font-size:.72rem;padding:10px 12px;border-radius:10px;z-index:70;word-break:break-word';
+    b.onclick=()=>b.remove();
+    document.body.appendChild(b);
+  }
+  b.textContent=msg+'  (tap to dismiss)';
+}
+
+/* ---------- today's programme (queue) ---------- */
+function findTask(ref){
+  const p=S.projects.find(x=>x.id===ref.pid); if(!p)return null;
+  const task=p.tasks.find(x=>x.id===ref.tid); if(!task)return null;
+  return {p,task};
+}
+function inQueue(pid,tid){ return (S.queue||[]).some(r=>r.pid===pid&&r.tid===tid); }
+function toggleQueue(pid,tid){
+  S.queue=S.queue||[];
+  if(inQueue(pid,tid)) S.queue=S.queue.filter(r=>!(r.pid===pid&&r.tid===tid));
+  else S.queue.push({pid,tid});
+  save(); renderToday(); renderProjects();
+}
+function moveQueue(i,dir){
+  const j=i+dir; if(j<0||j>=S.queue.length)return;
+  [S.queue[i],S.queue[j]]=[S.queue[j],S.queue[i]];
+  save(); renderToday();
+}
+/* ---------- the big three ---------- */
+function renderBigThree(){
+  const el=document.getElementById('big3'); if(!el)return;
+  el.innerHTML='';
+  const picked=[], seen=new Set();
+  const key=(pid,tid)=>pid+'::'+tid;
+  // 1) undone tasks in today-queue order — Doug's own ranking wins
+  (S.queue||[]).forEach(ref=>{
+    const f=findTask(ref);
+    if(f&&!f.task.done&&picked.length<3){ picked.push(f); seen.add(key(f.p.id,f.task.id)); }
+  });
+  // 2) top up from all projects: highest dial first, soonest due breaks ties
+  if(picked.length<3){
+    const rest=[];
+    (S.projects||[]).forEach(p=>(p.tasks||[]).forEach(t=>{
+      if(!t.done&&!seen.has(key(p.id,t.id))) rest.push({p,task:t});
+    }));
+    rest.sort((a,b)=>(b.task.dial||0)-(a.task.dial||0) ||
+      ((a.task.due||'9999')<(b.task.due||'9999')?-1:1));
+    while(picked.length<3&&rest.length) picked.push(rest.shift());
+  }
+  if(!picked.length){
+    el.innerHTML='<div class="today-empty">Nothing undone anywhere. The pond is calm. Suspiciously calm.</div>';
+    return;
+  }
+  picked.forEach((f,i)=>{
+    const row=document.createElement('div'); row.className='b3';
+    row.innerHTML=`<div class="b3-rank">${i+1}</div>
+      <div style="flex:1;cursor:pointer" title="open work mode"><span class="b3-proj">${esc(f.p.name)}</span>
+      <span class="b3-task">${esc(f.task.text)}</span>${dueBadge(f.task)}</div>`;
+    row.querySelector('div[title]').onclick=()=>openWork(f.p.id,f.task.id);
+    // controls: done ✓ · dial nudge · not today
+    const ctr=document.createElement('div');
+    ctr.style.cssText='display:flex;gap:6px;align-items:center;flex-wrap:wrap';
+    const done=document.createElement('button'); done.className='chk'; done.title='mark done';
+    done.textContent=f.task.done?'✓':'';
+    done.onclick=(e)=>{ e.stopPropagation(); f.task.done=!f.task.done; save(); renderToday(); renderProjects(); };
+    const dial=document.createElement('button'); dial.className='tq-btn'; dial.title='turn the dial up (wraps past 11)';
+    dial.textContent='◉ '+(f.task.dial??1);
+    dial.onclick=(e)=>{ e.stopPropagation(); f.task.dial=(f.task.dial>=11?1:(f.task.dial||1)+1); save(); renderToday(); renderProjects(); };
+    const skip=document.createElement('button'); skip.className='tq-btn'; skip.title='not today — drop from the Big Three, #4 rises';
+    skip.textContent='↷';
+    skip.onclick=(e)=>{ e.stopPropagation();
+      S.queue=(S.queue||[]).filter(q=>!(q.pid===f.p.id&&q.tid===f.task.id)); // out of today's queue
+      f.task.b3skip=(f.task.b3skip||0)+1; f.task.dial=Math.max(1,(f.task.dial||1)-1); // gentle demote
+      save(); renderToday(); renderProjects(); };
+    ctr.append(done,dial,skip);
+    row.appendChild(ctr);
+    el.appendChild(row);
+  });
+}
+
+function renderToday(){
+  renderBigThree();
+  S.queue=(S.queue||[]).filter(r=>findTask(r));   // drop dead refs
+  const el=document.getElementById('todayList'); el.innerHTML='';
+  if(!S.queue.length){
+    el.innerHTML='<div class="today-empty">Nothing queued. Open a project below and tap ▸ on a task to enlist it.</div>';
+    return;
+  }
+  let nowFound=false;
+  S.queue.forEach((ref,i)=>{
+    const {p,task}=findTask(ref);
+    const isNow=!task.done&&!nowFound; if(isNow)nowFound=true;
+    const row=document.createElement('div');
+    row.className='tq'+(isNow?' now':'')+(task.done?' done':'');
+    const chk=document.createElement('button'); chk.className='chk';
+    chk.textContent=task.done?'✓':''; chk.title='toggle done';
+    chk.onclick=()=>{ task.done=!task.done; save(); renderToday(); renderProjects(); };
+    const txt=document.createElement('div'); txt.className='tq-text';
+    txt.style.cursor='pointer'; txt.title='open work mode';
+    txt.innerHTML=(isNow?'▶ ':'')+esc(task.text)+dueBadge(task)+`<span class="tq-proj">${esc(p.name)} · dial ${task.dial}</span>`;
+    txt.onclick=()=>openWork(ref.pid,ref.tid);
+    const up=document.createElement('button'); up.className='tq-arrow'; up.textContent='↑';
+    up.onclick=()=>moveQueue(i,-1);
+    const dn=document.createElement('button'); dn.className='tq-arrow'; dn.textContent='↓';
+    dn.onclick=()=>moveQueue(i,1);
+    const del=document.createElement('button'); del.className='del'; del.textContent='×';
+    del.title='remove from today (task survives in its project)';
+    del.onclick=()=>{ S.queue.splice(i,1); save(); renderToday(); renderProjects(); };
+    row.append(txt,up,dn,chk,del); el.appendChild(row);
+  });
+}
+
+/* ---------- projects ---------- */
+function renderProjects(){
+  const root=document.getElementById('projects'); root.innerHTML='';
+  S.projects.forEach(p=>{
+    const div=document.createElement('div'); div.className='proj';
+    const openTasks=p.tasks.filter(x=>!x.done).length;
+    const head=document.createElement('div'); head.className='proj-head';
+    head.innerHTML=`<h3>${esc(p.name)}</h3><span class="proj-meta">${openTasks} open ${p.open?'▲':'▼'}</span>`;
+    head.onclick=()=>{ p.open=!p.open; save(); renderProjects(); };
+    div.appendChild(head);
+    if(p.open){
+      const body=document.createElement('div'); body.className='proj-body';
+      // ---- launch rail ----
+      p.links=p.links||[];
+      const lr=document.createElement('div'); lr.className='links-row';
+      p.links.forEach(link=>{
+        const a=document.createElement('a'); a.className='link-pill';
+        a.href=link.url; a.target='_blank'; a.rel='noopener';
+        a.textContent='⇗ '+link.name;
+        const x=document.createElement('span'); x.className='lx'; x.textContent='×';
+        x.title='remove link';
+        x.onclick=ev=>{
+          ev.preventDefault(); ev.stopPropagation();
+          if(x.classList.contains('armed')){
+            p.links=p.links.filter(l=>l.id!==link.id); save(); renderProjects();
+          } else {
+            x.classList.add('armed');
+            setTimeout(()=>x.classList.remove('armed'),3000);
+          }
+        };
+        a.appendChild(x); lr.appendChild(a);
+      });
+      const lt=document.createElement('button'); lt.className='link-toggle';
+      lt.textContent=p._addLink?'done':'+ link';
+      lt.onclick=()=>{ p._addLink=!p._addLink; renderProjects(); };
+      lr.appendChild(lt);
+      body.appendChild(lr);
+      if(p._addLink){
+        const la=document.createElement('div'); la.className='link-add';
+        const ln=document.createElement('input'); ln.className='ln'; ln.placeholder='name';
+        const lu=document.createElement('input'); lu.className='lu'; lu.placeholder='url';
+        lu.setAttribute('inputmode','url'); lu.setAttribute('autocapitalize','none');
+        const lb=document.createElement('button'); lb.textContent='✓';
+        lb.onclick=()=>{
+          let url=lu.value.trim(); if(!url)return;
+          if(!/^https?:\/\//i.test(url)) url='https://'+url;
+          let name=ln.value.trim();
+          if(!name){ try{name=new URL(url).hostname.replace(/^www\./,'');}catch(e){name='link';} }
+          p.links.push({id:t(),name,url});
+          p._addLink=false; save(); renderProjects();
+        };
+        la.append(ln,lu,lb); body.appendChild(la);
+      }
+      // ---- tasks ----
+      const sorted=[...p.tasks].sort((a,b)=> (a.done-b.done) || (b.dial-a.dial));
+      sorted.forEach(task=>{
+        const row=document.createElement('div'); row.className='task'+(task.done?' done':'');
+        const chk=document.createElement('button'); chk.className='chk';
+        chk.textContent=task.done?'✓':''; chk.title='toggle done';
+        chk.onclick=()=>{ task.done=!task.done; save(); renderProjects(); renderToday(); };
+        const txt=document.createElement('div'); txt.className='task-text';
+        const subs=task.subs||[];
+        const prog=subs.length?` <span style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--dim)">[${subs.filter(s=>s.done).length}/${subs.length}]</span>`:'';
+        txt.innerHTML=esc(task.text)+prog+dueBadge(task);
+        txt.title='open work mode';
+        txt.onclick=()=>openWork(p.id,task.id);
+        const dial=document.createElement('button');
+        dial.className='dial'+(task.dial>=9?' hot':''); dial.textContent=task.dial;
+        dial.title='priority dial — tap to turn up (wraps past 11)';
+        dial.onclick=()=>{ task.dial=task.dial>=11?1:task.dial+1; save(); renderProjects(); };
+        const tq=document.createElement('button');
+        tq.className='tq-btn'+(inQueue(p.id,task.id)?' q':''); tq.textContent='▸';
+        tq.title='add to / remove from Today';
+        tq.onclick=()=>toggleQueue(p.id,task.id);
+        row.append(txt,dial,tq,chk); body.appendChild(row);
+      });
+      const add=document.createElement('div'); add.className='add-row';
+      const inp=document.createElement('input'); inp.placeholder='new task…';
+      const btn=document.createElement('button'); btn.textContent='+';
+      const commit=()=>{ const v=inp.value.trim(); if(!v)return;
+        p.tasks.push({id:t(),text:v,dial:5,done:false}); inp.value=''; save(); renderProjects();
+        // reopen this project after render
+        };
+      btn.onclick=commit; inp.onkeydown=e=>{if(e.key==='Enter')commit();};
+      add.append(inp,btn); body.appendChild(add);
+
+      const delP=document.createElement('button'); delP.className='undo-btn';
+      delP.style.marginTop='10px'; delP.textContent='delete project';
+      delP.onclick=()=>{
+        if(delP.dataset.armed){
+          S.projects=S.projects.filter(x=>x.id!==p.id);
+          S.queue=(S.queue||[]).filter(r=>r.pid!==p.id);
+          save(); renderProjects(); renderToday(); renderChips();
+        } else {
+          delP.dataset.armed='1'; delP.textContent='tap again to delete — no undo';
+          delP.style.color='var(--red)';
+          setTimeout(()=>{delete delP.dataset.armed; delP.textContent='delete project'; delP.style.color='';},3000);
+        }
+      };
+      body.appendChild(delP);
+      div.appendChild(body);
+    }
+    root.appendChild(div);
+  });
+}
+function showNewProject(){
+  document.getElementById('newProjRow').style.display='flex';
+  document.getElementById('newProjBtn').style.display='none';
+  const inp=document.getElementById('newProjName');
+  inp.focus();
+  inp.onkeydown=e=>{if(e.key==='Enter')commitProject();};
+}
+function commitProject(){
+  const inp=document.getElementById('newProjName');
+  const name=inp.value.trim();
+  if(name){
+    S.projects.push({id:t(),name:name.toUpperCase(),open:true,tasks:[]});
+    save(); renderProjects(); renderChips();
+  }
+  inp.value='';
+  document.getElementById('newProjRow').style.display='none';
+  document.getElementById('newProjBtn').style.display='block';
+}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+/* ---------- work mode ---------- */
+function daysLeft(due){
+  const now=new Date(); now.setHours(0,0,0,0);
+  const d=new Date(due+'T00:00:00');
+  return Math.round((d-now)/86400000);
+}
+function dueBadge(task){
+  if(!task.due)return '';
+  const n=daysLeft(task.due);
+  let cls='due',label;
+  if(n<0){cls+=' over';label='OVERDUE '+Math.abs(n)+'d';}
+  else if(n===0){cls+=' soon';label='TODAY';}
+  else if(n<=3){cls+=' soon';label=n+'d left';}
+  else label='T−'+n+'d';
+  return ` <span class="${cls}">⏱ ${label}</span>`;
+}
+function setDue(v){
+  const f=cwTask(); if(!f)return;
+  f.task.due=v||null;
+  save(); renderWork(); renderProjects(); renderToday();
+}
+let cw=null; // {pid,tid}
+function openWork(pid,tid){ cw={pid,tid}; renderWork(); document.getElementById('work').classList.add('on'); window.scrollTo(0,0); }
+function closeWork(){ cw=null; document.getElementById('work').classList.remove('on'); renderProjects(); renderToday(); }
+function cwTask(){ return cw?findTask(cw):null; }
+function renderWork(){
+  const f=cwTask(); if(!f){closeWork();return;}
+  const {p,task}=f;
+  task.subs=task.subs||[]; task.notes=task.notes||'';
+  document.getElementById('workProj').textContent=p.name+' · dial '+task.dial;
+  document.getElementById('workTitle').textContent=task.text;
+  document.getElementById('workNotes').value=task.notes;
+  document.getElementById('workDue').value=task.due||'';
+  const dm=document.getElementById('workDueMsg');
+  if(task.due){
+    const n=daysLeft(task.due);
+    dm.textContent= n<0?('overdue by '+Math.abs(n)+' day'+(Math.abs(n)===1?'':'s')) : n===0?'due today' : n+' day'+(n===1?'':'s')+' out';
+    dm.style.color= n<0?'var(--red)': n<=3?'var(--amber)':'var(--dim)';
+  } else dm.textContent='';
+  // subtasks
+  const subEl=document.getElementById('workSubs'); subEl.innerHTML='';
+  if(!task.subs.length){
+    subEl.innerHTML='<div class="today-empty">No subtasks yet. Break it down or barrel through — dealer\'s choice.</div>';
+  }
+  task.subs.forEach(sub=>{
+    const row=document.createElement('div'); row.className='task'+(sub.done?' done':'');
+    const chk=document.createElement('button'); chk.className='chk';
+    chk.textContent=sub.done?'✓':'';
+    chk.onclick=()=>{ sub.done=!sub.done; save(); renderWork(); };
+    const txt=document.createElement('div'); txt.className='task-text'; txt.style.cursor='default';
+    txt.textContent=sub.text;
+    const del=document.createElement('button'); del.className='del'; del.textContent='×';
+    del.onclick=()=>{ task.subs=task.subs.filter(x=>x.id!==sub.id); save(); renderWork(); };
+    row.append(chk,txt,del); subEl.appendChild(row);
+  });
+  // associated ideas (tagged with this project)
+  const ideaEl=document.getElementById('workIdeas'); ideaEl.innerHTML='';
+  const rel=(S.ideas||[]).filter(i=>i.tags.includes(p.name));
+  if(!rel.length){
+    ideaEl.innerHTML='<div class="today-empty">No '+esc(p.name)+'-tagged ideas in the vault yet.</div>';
+  }
+  rel.forEach(idea=>{
+    const div=document.createElement('div'); div.className='idea';
+    const txt=document.createElement('div'); txt.className='idea-text'; txt.textContent=idea.text;
+    const meta=document.createElement('div'); meta.className='idea-meta';
+    const b=document.createElement('button'); b.className='to-sub'; b.textContent='→ subtask';
+    b.onclick=()=>{
+      task.subs.push({id:t(),text:idea.text,done:false});
+      S.ideas=S.ideas.filter(x=>x.id!==idea.id);
+      save(); renderWork(); renderBank();
+    };
+    meta.appendChild(b);
+    idea.tags.forEach(tg=>{const s=document.createElement('span');s.className='idea-tag';s.textContent='#'+tg;meta.appendChild(s);});
+    div.append(txt,meta); ideaEl.appendChild(div);
+  });
+}
+function delCurrentTask(){
+  const f=cwTask(); if(!f)return;
+  const b=document.getElementById('workDelBtn');
+  if(b.dataset.armed){
+    f.p.tasks=f.p.tasks.filter(x=>x.id!==f.task.id);
+    S.queue=(S.queue||[]).filter(r=>r.tid!==f.task.id);
+    delete b.dataset.armed; b.textContent='delete this task';
+    save(); closeWork();
+  } else {
+    b.dataset.armed='1'; b.textContent='tap again to delete \u2014 no undo';
+    setTimeout(()=>{delete b.dataset.armed; b.textContent='delete this task';},3000);
+  }
+}
+function addSub(){
+  const f=cwTask(); if(!f)return;
+  const inp=document.getElementById('subInput');
+  const v=inp.value.trim(); if(!v)return;
+  f.task.subs=f.task.subs||[];
+  f.task.subs.push({id:t(),text:v,done:false});
+  inp.value=''; save(); renderWork();
+}
+function saveNotes(v){ const f=cwTask(); if(!f)return; f.task.notes=v; save(); }
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.activeElement&&document.activeElement.id==='subInput')addSub();
+});
+
+/* ---------- rest ---------- */
+function toggleMailHelp(on){
+  document.getElementById('mailhelp').style.display=on?'flex':'none';
+}
+function toggleRest(on){
+  document.getElementById('rest').classList.toggle('on',on);
+  S.restSince=on?Date.now():null; save();
+}
+
+/* ---------- footer quotes (deep cuts) ---------- */
+const QUOTES=[
+  "“I could see that, if not actually disgruntled, he was far from being gruntled about the bacon situation.” — misquoted on purpose; go find the real one.",
+  "“The fascination of shooting as a sport depends almost wholly on whether you are at the right or wrong end of the gun.” — P.G. Wodehouse",
+  "“Every word is like an unnecessary stain on silence and nothingness.” — Samuel Beckett",
+  "“The tradition of all dead generations weighs like a nightmare on the brains of the living.” — Karl Marx",
+  "“He had just about enough intelligence to open his mouth when he wanted to eat, but certainly no more.” — P.G. Wodehouse",
+  "“Dance first. Think later. It's the natural order.” — Samuel Beckett",
+  "“The unhappiest of mortals is the man of leisure with nothing to do.” — variously attributed; the console disagrees on your behalf."
+];
+function renderQuote(){
+  document.getElementById('footQuote').textContent=QUOTES[new Date().getDate()%QUOTES.length];
+}
+
+/* ---------- lifeboat ---------- */
+function doBackup(){
+  const out=document.getElementById('backupOut');
+  out.style.display='block';
+  document.getElementById('restoreRow').style.display='none';
+  document.getElementById('backupText').value=JSON.stringify(S);
+}
+function showRestore(){
+  document.getElementById('restoreRow').style.display='block';
+  document.getElementById('backupOut').style.display='none';
+}
+function doRestore(){
+  const v=document.getElementById('restoreText').value.trim();
+  if(!v)return;
+  try{
+    const parsed=JSON.parse(v);
+    if(!parsed.projects) throw new Error('not a Mission Control backup');
+    S=parsed; save(); renderAll();
+    document.getElementById('restoreRow').style.display='none';
+    alertBox('Restored. If storage is online, it will save momentarily.');
+  }catch(e){ alertBox('Restore failed: '+e.message); }
+}
+
+/* ---------- boot ---------- */
+function renderAll(){
+  S.ideas=S.ideas||[]; S.queue=S.queue||[];
+  renderStatus(); renderToday(); renderProjects(); renderQuote();
+  renderChips(); renderBank();
+  if(S.restSince) document.getElementById('rest').classList.add('on');
+}
+const STATUS_LINES={
+  fresh:[
+    "The morning is set fair. Jeeves has laid out only the light tasks.",
+    "Full tanks, calm seas. Spend like a careful aunt.",
+    "Systems nominal. Remember: capacity is a rumor until proven."
+  ],
+  mid:[
+    "Proceeding nicely. Do not attempt heavy lifting after lunch.",
+    "Half measures are the whole point today. Steady as she goes.",
+    "You are doing well, which is precisely when the trouble starts."
+  ],
+  zone:[
+    "The afternoon lengthens. Wrap the current thought; land the plane.",
+    "Tea-time physics: everything takes longer than it should. Allow for it.",
+    "A good stopping point is worth two good starting points."
+  ],
+  over:[
+    "Evening, sir. The empire keeps; the console keeps; you may stand down.",
+    "Whatever it is, it is tomorrow's problem, and tomorrow is very capable.",
+    "Horizontal is the correct altitude at this hour."
+  ]
+};
+function renderStatus(){
+  const h=new Date().getHours();
+  const bucket= h<11?'fresh' : h<15?'mid' : h<19?'zone' : 'over';
+  const lines=STATUS_LINES[bucket];
+  document.getElementById('status').textContent=lines[new Date().getDate()%lines.length];
+}
+load();
+</script>
+</body>
+</html>

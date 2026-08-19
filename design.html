@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>droogworks — The Design Doc</title>
+<style>
+  :root{--paper:#faf8f3;--ink:#1d1c1a;--faded:#6f6a61;--line:#d9d4c8;--accent:#155e63}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);
+    font:17.5px/1.65 Georgia,'Times New Roman',serif;padding-bottom:90px}
+  header{max-width:700px;margin:0 auto;padding:36px 20px 8px}
+  .back{font:13px -apple-system,Helvetica,Arial,sans-serif;color:var(--accent);text-decoration:none}
+  h1{font-size:32px;font-weight:normal;margin-top:10px}
+  h1 em{font-style:italic;color:var(--accent)}
+  .sub{color:var(--faded);font-size:14px;margin-top:4px;font-family:-apple-system,Helvetica,Arial,sans-serif}
+  main{max-width:700px;margin:0 auto;padding:0 20px}
+  h2{font:13px -apple-system,Helvetica,Arial,sans-serif;text-transform:uppercase;
+    letter-spacing:2px;color:var(--accent);margin:38px 0 10px;
+    border-bottom:1.5px solid var(--line);padding-bottom:8px}
+  p{margin-top:12px}
+  em.term{font-style:italic;color:var(--accent)}
+  blockquote{margin:16px 0 4px;padding-left:18px;border-left:3px solid var(--line);
+    color:var(--faded);font-style:italic}
+  ul{margin:10px 0 0 22px}
+  li{margin-top:7px}
+  .provenance{margin-top:46px;font:12.5px -apple-system,Helvetica,Arial,sans-serif;
+    color:var(--faded);border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<header>
+  <a class='back' href='/'>&#8592; back to the pond</a>
+  <h1>The <em>Design Doc</em></h1>
+  <div class="sub">One living document. Notes stop scattering here. Last woven: August 18, 2026.</div>
+</header>
+
+<main>
+  <h2>What this all is</h2>
+  <p><em class="term">Phrog</em> is an art platform for handicapped artists — and, it turns out, for everyone — that dissolves the graphical user interface into conversation. It exists because its maker needs it: a lifetime of works trapped behind interfaces that cost pain to operate. A meaningful fraction of humanity is bottled up the same way. Phrog is the uncorking.</p>
+  <p><em class="term">Droogworks</em> is the first pad on the platform: Doug Sharp's own place in the pond, built before the platform exists, so the platform is grown from a real dwelling instead of a spec.</p>
+
+  <h2>The Pond, the Pad, the Pods</h2>
+  <p>Every Mage has a <em class="term">pad</em> — a lily pad floating on the pond. On top: the frog, the public face. Below, on biological tendrils, hang the <em class="term">pods</em> — the rooms. A Library pod. A Museum pod for the best work. A Game Room. A Workshop where the Mage works with Familiars on art in every medium. Later: Collaboration and Performance pods. The pods are organic; they grow, they aren't installed.</p>
+  <p>There is no avatar. The pad is first-person, like life. You may post a picture of yourself, or anything else, in an intro pod — or nothing at all.</p>
+  <p><em class="term">Water lilies spawn Familiars.</em> The pond is generative, not decorative.</p>
+
+  <h2>Mages, Familiars, and the Grip</h2>
+  <p>A <em class="term">Mage</em> is anyone making art here. <em class="term">Familiars</em> are the small minds that know their craft — BIRO knows writing, Marion knows the archive, others will know sound, image, motion. Phrog knows <em>you</em>, and conducts. Whether Phrog is itself a Familiar or something above them is an open question the onboarding narrative will dramatize rather than settle.</p>
+  <p>The <em class="term">Grip</em> is the living record of your abilities to grasp and use the tools — what your hands, voice, eyes, and attention can actually do today. Everyone has a Grip. Mages with so-called normal abilities use Familiars too; the Grip just fits differently in every hand. Phrog holds your Grip so no tool ever demands what you cannot give.</p>
+  <p><em class="term">Alligators</em> are what patrol the water: the frictions, the extractive platforms, the interface taxes, the bad days. Onboarding assesses your alligators and suggests Familiars to match. You can ride Frog to visit other Mages — but watch the water.</p>
+
+  <h2>The Harness — what a Mage's Phrog actually runs</h2>
+  <p>Each Mage's Phrog runs as a <em class="term">harness</em> — call it the Hermes pattern: the swift messenger who carries words between worlds and owns the winged sandals, not the message. The harness is the loop wrapped around whatever AI mind is currently loaded. Minds are guests; they improve monthly and can be swapped without the Mage losing anything. The harness is the dwelling, and the Mage owns it.</p>
+  <p>The harness holds five things, permanently, locally, in the Mage's possession:</p>
+  <ul>
+    <li><strong>Memory.</strong> The Mage's catalog (the Pad's own data is the first memory file), their preferences, their vocabulary, their works-in-progress, and the running state of every project. A new session begins already knowing you. No re-introduction, ever — re-introduction is an interface tax, and the pond doesn't collect those.</li>
+    <li><strong>The Grip.</strong> What the Mage's hands, voice, eyes, and attention can do <em>today</em>. Held at harness level so every Familiar inherits it for free — no tool may demand what the Grip cannot give.</li>
+    <li><strong>The toolbelt.</strong> Familiars plug into the harness as tools: BIRO for writing, Marion for the archive, Dramaton for narrative, whatever comes. A Familiar never talks to the raw model; it talks to the harness, which speaks for the Mage.</li>
+    <li><strong>Pacing.</strong> The harness watches the Mage's energy budget — heart-rate pacing, session length, one-instruction-at-a-time cadence — and enforces rest the way a good stage manager enforces intermission. The tool that exhausts its artist has failed at its only job.</li>
+    <li><strong>The Wake.</strong> Provenance is recorded at harness level — the full input stream, the proof of making. Because it lives in the harness and not in any vendor's cloud, the proof belongs to the Mage.</li>
+  </ul>
+  <p>This is why droogworks could be built the way it was: its maker worked inside exactly such a harness — persistent memory, pluggable tools, paced sessions — and the fit was so good the architecture simply got copied downward. Phrog is the harness pattern, handed to every Mage.</p>
+
+  <h2>Where Phrog lives — ruled August 18, 2026</h2>
+  <p>The question was posed and the Mage has ruled: <em class="term">your Phrog follows you</em>. Not a Phrog per pod, not a separate makers' room — one Phrog, yours, present in every pod, wearing that pod's craft like a hat. In the Writing pod it speaks BIRO; among the frames it thinks in image; in the record bin it thinks in sound. One memory, one Grip, many toolbelts — the Harness pattern walking around the dwelling.</p>
+  <p>This settles what the pods are <em>for</em>. A pod is not a display case; it is a room where work happens. Every work in a pod is clickable into an editing session with a rich interface fitted to its medium — and beside the finished works sits a blank item, the new-thing seed, waiting for the Mage to click it and start from scratch. Display is just the resting state of a workshop.</p>
+  <p>Sequencing: the display layer ships first (bookshelf, record bin, gallery wall — live now); the editing layer arrives when BIRO is woven into the Writing pod, which is the first loom on the schedule.</p>
+
+  <h2>Onboarding is a story</h2>
+  <p>You do not fill out a form. You meet the place. The onboarding is a narrative interaction — a natural first job for <em class="term">Dramaton</em>, the 1987 narrative engine now resurrected — that walks a new Mage through: what alligators trouble your water; which Familiars might help; what Familiars you already have; and the ethics and rules of the pond.</p>
+
+  <h2>Laws of the pond</h2>
+  <ul>
+    <li><strong>No likes, no comments, no counting.</strong> Presence over metrics. A <em class="term">calling card</em> is how Mages reach each other. Curation — a Mage mounting a show of others' work — is the honored form of appreciation.</li>
+    <li><strong>Privacy is architecture, not a setting.</strong> Pad contents are firmly private by default; any pod or any single work can open to Mages, to friends, or to the world. Real encryption is a committed workstream (deliberately sequenced after v0 ships).</li>
+    <li><strong>Provenance is law.</strong> Every work may carry its full input-stream Wake — the only platform where art can prove its maker.</li>
+    <li><strong>Any input becomes text.</strong> BIRO — all Familiars — accept plug-in modality modules: voice, switch, gaze, whatever the Grip offers. How does a blind Mage use BIRO? How do you write with no voice? Those questions are requirements, not edge cases.</li>
+    <li><strong>Graphics come from three springs:</strong> your own library, a search, or AI — everywhere the platform calls for an image, the Mage's art gets first refusal.</li>
+    <li><strong>Money exists but arrives late.</strong> Ways of earning come after the dwelling is sound.</li>
+  </ul>
+
+  <h2>The instruments</h2>
+  <p><em class="term">BIRO</em> — the writing Familiar. Local-first, voice-native, with a secretary mind and a deterministic patch protocol. Currently v1.34 on Droog's Windows machine: acknowledgment chirp, "to BIRO" speech bubble, conversational-speed mind. It does not live on the web; a pen is not a billboard. Planned: zoom-to-current-writing and zoom-to-selection, settable, with a split view when the writing cursor and the selection diverge.</p>
+  <p><em class="term">Dramaton</em> — the narrative engine, born 1987 in King of Chicago, resurrected 2026. A complete game editor lives in GitHub, analyzed and fairly advanced. First platform job: the onboarding story.</p>
+  <p><em class="term">Marion</em> — the memory Familiar, dragonfly librarian of the fifty-year catalog.</p>
+  <p>Someday: native <em class="term">SPIF</em> graphics and animation creation. Someday: fonts that write themselves across the page in a moving hand — beautiful, and parked far down the list by order of the Mage.</p>
+
+  <h2>Why droogworks first</h2>
+  <blockquote>Build the thing this artist could use without shame — then hand it to everyone.</blockquote>
+  <p>Doug is user zero. The Library pod opens with twelve deep-synopsized works and a fifty-year archive behind it. Iteration happens on a real dwelling with real belongings. When Chris's drawings of frogs, pads, alligators, and Familiars arrive, they replace the placeholder pond — art swaps in, and never blocks the build.</p>
+
+  <div class="provenance">Woven from: PHROG_FOUNDATION_COMPLETE.md · Droog's spoken notes of Aug 16–18, 2026 · the BIRO v1.34 report · the Library catalog project · the Harness ("Hermes") architecture ruling of Aug 18, 2026. Contradictions preserved where found; the Mage rules on ambiguities.</div>
+</main>
+</body>
+</html>
