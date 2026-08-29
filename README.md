@@ -10,11 +10,14 @@ truth; Netlify is only where it is shown.
 | `index.html` | **Droog's Pad** — the front door (identical to `pad/index.html`) |
 | `pad/index.html` | the Pad: one-file app, data-driven from `pad/catalog.json` |
 | `pad/catalog.json` | 141 works in 9 racks; each work's `media[]` says what can be played/read |
+| `catalog.json` | root copy of the same file — `index.html` and `library.html` fetch it relatively, so `/` and `/library` need it here |
 | `pad/media/<work-id>/` | the actual albums, comics, PDFs, book texts, covers (~135 MB) |
 | `pond.html` | the pond hub page (`/pond`) |
-| `quotes.html` | Voice Notes (`/quotes`) |
+| `quotes.html` | Voice Notes (`/quotes`) — fetches `quotes.json` |
+| `quotes.json` | 6,968 dictaphone quotes (~3.8 MB); without it Voice Notes renders empty |
 | `library.html` | the Library (`/library`) |
 | `control.html`, `design.html`, `biro.html`, `dramaton.html` | the other pods |
+| `music.html`, `art.html`, `games.html` | the three "Growing" pods (`/music`, `/art`, `/games`) |
 | `dramaton-studio/` | a **built** copy of Dramaton Studio; source lives in [dramaton-studio-62](https://github.com/DougDroogSharp/dramaton-studio-62) |
 | `dramaton-2-salvage.md` | salvage notes from Dramaton Editor 2.0 |
 | `archive/` | earlier versions of pages worth keeping |
@@ -47,6 +50,20 @@ Assembled 2026-08-18 from two Netlify deploys:
 - pages + catalog from deploy `6a853dd3ef111eeb7abc2016` (v0.8 "density pass", 2026-08-18 22:23 PDT)
 - `pad/media/` from deploy `6a84143cf3fea90c800a692b` (2026-08-18 01:13 PDT), the last one that shipped the media
 
-Known gap: `catalog.json` references three files that were never uploaded
-anywhere — `pad/media/evening-star/evening-star-01.mp3`,
-`evening-star-02-multi-line.mp3`, `pad/media/flawberry-straw-song/flawberry-straw-song.mp3`.
+That known gap is closed: the three files `catalog.json` referenced but no deploy
+ever carried — `pad/media/evening-star/evening-star-01.mp3`,
+`evening-star-02-multi-line.mp3` and
+`pad/media/flawberry-straw-song/flawberry-straw-song.mp3` — are now in the repo.
+Every one of the 81 media paths in `catalog.json` resolves to a file here.
+
+Reconciled 2026-08-28 against the live site: `music.html`, `art.html`,
+`games.html`, `quotes.json` and the root `catalog.json` existed only on Netlify
+and have been pulled back in. The repo is now a superset of what is live —
+every page and asset live serves, plus all of `pad/media/`, which the current
+live deploy is missing.
+
+## Known drift from live
+
+The live site is currently serving a deploy with **no `pad/media/`** — every
+album, comic, PDF and book text on the Pad 404s there right now. This repo has
+them. Deploying this repo restores them.
