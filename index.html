@@ -401,7 +401,10 @@ const P = {
 async function boot(){
   try{
     if (window.PAD_CATALOG){ DATA = window.PAD_CATALOG; }
-    else { const r = await fetch('catalog.json', {cache:'no-store'}); DATA = await r.json(); }
+    /* Absolute, not relative: this one file is served at /, /library and /pad/
+       via 200 rewrites, and a 200 rewrite keeps the browser's URL. A relative
+       'catalog.json' would therefore resolve differently at each of those. */
+    else { const r = await fetch('/catalog.json', {cache:'no-store'}); DATA = await r.json(); }
   }catch(e){
     document.getElementById('grid').innerHTML =
       '<div class="empty sans">Could not load catalog.json.<br>If you opened this file directly from disk, use the standalone build instead.</div>';

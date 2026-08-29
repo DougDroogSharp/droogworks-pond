@@ -1,0 +1,23 @@
+# The Pad is one file, served at every URL that used to have its own copy.
+#
+# index.html at the repo root is the real file — the front door is never a
+# redirect, so if this file is ever missing or wrong, / still serves.
+#
+# 200 = rewrite: the browser's URL is unchanged, the root index.html is served.
+# That is why index.html fetches /catalog.json absolutely; a relative path
+# would resolve to a different place at each of the URLs below.
+#
+# Exact paths only — no wildcards. /pad/* would otherwise shadow /pad/media/.
+# (Netlify applies these rules only when no static file matches, so the media
+# is safe either way, but exact rules keep that from being load-bearing.)
+#
+# The .html and /pad/catalog.json rules exist because the old deploy served
+# those URLs as real files. They are kept so nothing that ever worked 404s.
+
+/pad/catalog.json    /catalog.json    200
+
+/library             /                200
+/library.html        /                200
+/pad                 /                200
+/pad/                /                200
+/pad/index.html      /                200
